@@ -1,0 +1,50 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ToDoApp</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 2rem; max-width: 720px; }
+    .row { display: flex; gap: 0.5rem; margin: 1rem 0; }
+    input { flex: 1; padding: 0.6rem; }
+    button { padding: 0.6rem 1rem; cursor: pointer; }
+    li { cursor: pointer; }
+    .done { text-decoration: line-through; opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <h1>ToDo (Docker + .NET + SQL)</h1>
+  <div class="row">
+    <input id="title" placeholder="Add task..." />
+    <button id="add">Add</button>
+  </div>
+  <ul id="list"></ul>
+  <script>
+    const list = document.getElementById('list');
+    const title = document.getElementById('title');
+    async function load() {
+      const res = await fetch('/api/dbtodos');
+      const data = await res.json();
+      render(data);
+    }
+    function render(items) {
+      list.innerHTML = '';
+      for (const it of items) {
+        const li = document.createElement('li');
+        li.className = it.done ? 'done' : '';
+        li.textContent = `#${it.id} ${it.title}`;
+        li.onclick = async () => { await fetch(`/api/dbtodos/${it.id}/toggle`, { method: 'POST' }); load(); };
+        list.appendChild(li);
+      }
+    }
+    document.getElementById('add').onclick = async () => {
+      const t = title.value.trim(); if (!t) return;
+      await fetch('/api/dbtodos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: t }) });
+      title.value = ''; load();
+    };
+    load();
+  </script>
+</body>
+</html>

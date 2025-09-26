@@ -1,0 +1,34 @@
+
+version: "3.9"
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Str0ngPassword!"
+      MSSQL_PID: "Express"
+    ports:
+      - "11433:1433"
+    volumes:
+      - mssqldata:/var/opt/mssql
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      ConnectionStrings__SqlServer: "Server=mssql,1433;Database=ToDoDb;User Id=sa;Password=Str0ngPassword!;TrustServerCertificate=True"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mssql
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  mssqldata: {}
