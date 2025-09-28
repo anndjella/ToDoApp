@@ -34,10 +34,12 @@ jobs:
 
 
   build-and-push-docker:
+    name: docker (${{ matrix.service }})
     needs: build-test
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        service: [backend, frontend]
         include:
           - name: backend
             context: ./backend
