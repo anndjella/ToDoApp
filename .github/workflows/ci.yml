@@ -40,13 +40,14 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     strategy:
       matrix:
-        service: [backend, frontend]
         include:
-          - name: backend
+          - service: backend
+            name: backend
             context: ./backend
             dockerfile: ./backend/Dockerfile
             image: ${{ vars.BACKEND_IMAGE_NAME }}
-          - name: frontend
+          - service: frontend
+            name: frontend
             context: ./frontend
             dockerfile: ./frontend/Dockerfile
             image: ${{ vars.FRONTEND_IMAGE_NAME }}
