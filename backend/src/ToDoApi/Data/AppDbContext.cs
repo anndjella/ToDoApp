@@ -15,6 +15,9 @@ public class AppDbContext : DbContext
         {
             e.HasKey(x => x.Id);
             e.Property(x => x.Title).IsRequired().HasMaxLength(200);
+            e.Property(x => x.Priority)
+                 .HasConversion<int>()
+                 .HasDefaultValue(Priority.Medium);
         });
     }
 }

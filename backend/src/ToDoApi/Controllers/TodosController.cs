@@ -15,13 +15,14 @@ public class TodosController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<TodoItem>> Get() => Ok(_svc.GetAll());
 
-    public record AddTodoDto(string Title);
+    public record AddTodoDto(string Title, int Priority = 2);
 
     [HttpPost]
     public ActionResult<TodoItem> Post([FromBody] AddTodoDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Title)) return BadRequest("Title required");
-        var added = _svc.Add(dto.Title.Trim());
+        var pr = Math.Clamp(dto.Priority, 1, 3);
+        var added = _svc.Add(dto.Title.Trim(), pr); 
         return CreatedAtAction(nameof(Get), new { id = added.Id }, added);
     }
 

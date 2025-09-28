@@ -10,9 +10,10 @@ public class TodoService : ITodoService
 
     public IReadOnlyList<TodoItem> GetAll() => _items;
 
-    public TodoItem Add(string title)
+    public TodoItem Add(string title, int priority = 2)
     {
-        var item = new TodoItem { Id = _id++, Title = title, Done = false };
+        var pr = Math.Clamp(priority, 1, 3);
+        var item = new TodoItem { Id = _id++, Title = title, Done = false, Priority = (Priority)pr };
         _items.Add(item);
         return item;
     }
